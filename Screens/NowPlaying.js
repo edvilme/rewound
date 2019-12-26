@@ -16,7 +16,8 @@ export default class ScreenNowPlaying extends React.Component{
     constructor(){
         super();
         this.state = {
-            clickWheelActive:false
+            clickWheelActive:false, 
+            volume: 0
         }
     }
     onClick(){
@@ -32,13 +33,12 @@ export default class ScreenNowPlaying extends React.Component{
         if(this.volumeSlider){
             this.volumeSlider.onChange(direction)
         }
-
     }
 
     onRelease(){
         setTimeout(()=>{
             this.setState({
-                clickWheelActive: false
+                clickWheelActive: false,
             })
         }, 3000)
     }
@@ -55,7 +55,7 @@ export default class ScreenNowPlaying extends React.Component{
                     </View>
                 </View>
                 {
-                    this.state.clickWheelActive ?  <UISlider ref={(elem)=>{this.volumeSlider=elem}} max={10}></UISlider>:<UIProgressBar></UIProgressBar>
+                    this.state.clickWheelActive ? <UISlider ref={(elem)=>{this.volumeSlider=elem}} max={10} onUpdate={value=>{ this.setState({volume: value}) }} value={this.state.volume}></UISlider>:<UIProgressBar></UIProgressBar>
                 }
             </View>
         )

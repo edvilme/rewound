@@ -15,6 +15,7 @@ import {UIListView, UIProgressBar} from './UIElements'
 import { Linking } from 'expo';
 
 import ScreenNowPlaying from './Screens/NowPlaying'
+import ScreenAlbums from './Screens/Albums'
 
 
 export class StatusBar extends React.Component{
@@ -73,6 +74,7 @@ export default class Screen extends React.Component{
             'ScreenMusic': <ScreenMusic clickWheelValue={this.props.clickWheelValue} ref={elem=>this.current=elem} onChangeScreen={screen=>this.changeScreen(screen)}></ScreenMusic>,
             'ScreenVideos': <ScreenVideos clickWheelValue={this.props.clickWheelValue} ref={elem=>this.current=elem}></ScreenVideos>,
             'ScreenPhotos': <ScreenPhotos clickWheelValue={this.props.clickWheelValue} ref={elem=>this.current=elem}></ScreenPhotos>,
+            'ScreenAlbums': <ScreenAlbums clickWheelValue={this.props.clickWheelValue} ref={elem=>this.current=elem}></ScreenAlbums>,
         }
     }
 
@@ -140,7 +142,7 @@ class ScreenMain extends React.Component{
                         action: ()=> {Linking.openURL('https://mailchi.mp/0bdb6bed638d/rewoundanroid')}
                     },
                     {
-                        text: 'About (edvilme, v.0.9)',
+                        text: 'About (edvilme, v.0.9.5)',
                         action: ()=>{ Alert.alert("Hello world! Twitter: @edvilme") }
                     },
             ]}></UIListView>
@@ -159,10 +161,13 @@ class ScreenMusic extends React.Component{
             selectedIndex: null
         }
     }
+    onChange(direction){
+        this.list.onChange(direction)
+    }
     onClick(){
         //if( this.state.selectedIndex.screen ){
             //this.props.onChangeScreen( this.state.selectedIndex.screen )
-            this.props.onChangeScreen( 'ScreenNowPlaying' )
+            this.props.onChangeScreen( 'ScreenAlbums' )
         //}
     }
     render(){
@@ -170,7 +175,8 @@ class ScreenMusic extends React.Component{
             <UIListView  clickWheelValue={this.props.clickWheelValue} 
                 onChangeSelectedIndex={(item) => {
                     this.state.selectedIndex = item
-                }}            
+                }}   
+                ref={(elem)=>{this.list=elem}}         
                 content={[
                     {text: 'Playlists'},
                     {text: 'Genres'},
@@ -228,9 +234,9 @@ const styles = StyleSheet.create({
     },
     Screen: {
         backgroundColor: 'white', 
-        height: Dimensions.get('window').width*0.9, 
-        width: Dimensions.get('window').width*0.9, 
-        borderRadius: 20,
+        height: Dimensions.get('window').height*0.4, 
+        width: Dimensions.get('window').height*0.4, 
+        borderRadius: 20, 
         margin: 16
     }
 })
