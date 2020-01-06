@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         borderRadius: 70
     },
     SecondaryButton: {
-        backgroundColor: 'green',
+        //backgroundColor: 'green',
         height: 80, 
         width: 80,
         borderRadius: 40,

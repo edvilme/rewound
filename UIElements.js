@@ -130,15 +130,39 @@ export class UICoverflow extends React.Component{
         this.range = 8
     }
     
-    f(x){        
-        let a = this.range.toFixed(0);
-        let b = this.state.selectedIndex.toFixed(0);
+    f(x){     
+        let a = this.range;
+        let b = this.state.selectedIndex;
         let c = b - (a/2)
-        let result = (-4/(a**2))*((x - c)**2 - a*( x - c ))
-        return result < 0.2 ? 0: result**2
+        let f = (-4/a**2)*( (x-c)**2 - a*(x-c) )
+        return f 
     }
 
-    onChange(direction){
+    tilt(x){
+        let a = this.range;
+        let b = this.state.selectedIndex;
+        let c = b - (a/2)
+        let df = (4/a**2)*(a + 2*c - 2*x)
+        let angle = Math.atan(df)
+        return angle+'rad'
+
+    }
+
+    returnStyle(x){
+        let transform = {
+            translateX: 0, 
+        };
+        if(x<this.state.selectedIndex){
+            transform.translateX = 100*(this.state.selectedIndex - x)**2 + 50;
+        } else if(x>this.state.selectedIndex){
+            transform.translateX = -100*(x - this.state.selectedIndex)**2 - 50
+        } else {
+            transform.translateX = 0
+        }
+        return transform;
+    }
+
+    onChange(direction){ 
         if(direction == 'positive'){
             if( this.state.selectedIndex < this.props.content.length-1 ){
                 this.state.selectedIndex+=1
@@ -150,24 +174,28 @@ export class UICoverflow extends React.Component{
                 this.state.selectedIndex = 0
             }
         }
-        this.scroll.scrollTo({y: 0, x: 196*this.state.selectedIndex-90+24})
+        this.scroll.scrollTo({y: 0, x: (180+16)*(this.state.selectedIndex)-(90+30)})
         this.forceUpdate()
         //this.props.onUpdate( this.state.selectedIndex )
     } 
 
     render(){
         return(
-            <ScrollView ref={elem=>{this.scroll = elem}} horizontal scrollEnabled={false} contentContainerStyle={{alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <ScrollView ref={elem=>{this.scroll = elem}} horizontal scrollEnabled={false} contentContainerStyle={{alignContent: 'center', alignItems: 'center', justifyContent: 'center', paddingBottom: 24}}>
                 {
                     this.props.content.map((l, i)=>{
-                        return( <View style={{ width: 180, height: 180, backgroundColor: 'black', margin: 8, 
-                        borderColor: i==this.state.selectedIndex ? 'blue' : 'black', 
-                        borderWidth: i==this.state.selectedIndex ? 2 : 0,
-                        transform: [
-                            { scale: this.f(i) }
-                        ]
 
-                        }}></View> )
+                        return( <View style={[styles.AlbumArt, {   
+                        position: 'relative', 
+                        zIndex: (this.f(i)*10).toFixed(0), 
+                        transform: [
+                            { perspective: 200 },   
+                            //{ scale: this.f(i) }, 
+                            { rotateY: this.tilt(i) },
+                            this.returnStyle(i)
+                        ]
+                        }]}>
+                        </View> )
                     })
                 }
             </ScrollView>
@@ -196,5 +224,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         height: '100%',
         width: '80%'
+    },
+    AlbumArt: {
+        width: 180, height: 180, margin: 8, backgroundColor: 'blue', borderColor: 'black', borderWidth: 4
     }
 })
